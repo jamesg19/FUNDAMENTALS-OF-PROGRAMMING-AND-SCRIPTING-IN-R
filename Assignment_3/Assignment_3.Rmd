@@ -1,0 +1,43 @@
+---
+title: "Tarea 3"
+output: html_document
+date: "2025-03-18"
+author: "James Gramajo"
+---
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+data_air_bnb <- read_csv("listings.csv")
+print(data_air_bnb)
+```
+FIRST PART
+```{r}
+#Display the first rows and the structure of the dataset (head(), str())
+head(data_air_bnb)
+str(data_air_bnb)
+
+#Perform aa transformation for the price column
+data_air_bnb <- data_air_bnb %>%
+  mutate(price = as.numeric(gsub("\\$", "", price)))
+
+
+#Filters records to keep only accommodations with more than 10 reviews and a price less than $500 per night. #Also, excludes missing valuesfor the host_location column.
+data_air_bnb_filter <- data_air_bnb %>%
+  filter(number_of_reviews > 10, price < 500, is.na(host_location) )
+
+#Sorts data from highest to lowest availability (availability_365).
+data_air_bnb_filter <- data_air_bnb_filter %>%
+  arrange(desc(availability_365))
+
+#Create a new column called total revenue, which represents the potential revenue in a year (price * availability_365).
+data_air_bnb_filter <- data_air_bnb_filter %>%
+  mutate(total_revenue, = price * availability_365 )
+
+
+
+
+```
+
