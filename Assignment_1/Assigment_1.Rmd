@@ -1,0 +1,131 @@
+VECTOR ANALYSIS
+ 
+Vector of unemployment rates for the year
+```{r}
+unemployment_rates <- c(CostaRica = 11.5, Guatemala = 3.7, Honduras = 5.9, ElSalvador = 7.4, Panama = 4.2)
+```
+
+Vector de las tasas de desempleo proyectadas
+```{r}
+projected_rates <- c(CostaRica = 12, Guatemala = 3.9, Honduras = 6.1, ElSalvador = 7.0, Panama = 4.5)
+```
+
+Comparison operators (>, <, ==) to perform the following comparisons:
+Which countries have an unemployment rate above 5% this year?
+ANALYSIS: TRUE values indicate that the country has an unemployment rate above 5%, while FALSE means it is below that threshold.
+```{r}
+current_rate_greater_than_5 <- unemployment_rates >5
+print(current_rate_greater_than_5)
+```
+
+Which countries have a projected unemployment rate below 5% for next year?
+ANALYSIS: TRUE values indicate that the country has an unemployment rate below 5%, while FALSE means it is above that threshold.
+```{r}
+projected_rate_less_than_5 <- projected_rates <5
+print(projected_rate_less_than_5)
+```
+
+
+In which countries is the unemployment rate this year equal to the one projected for next year?
+ANALYSIS: There are no countries where the unemployment rate this year is exactly the same as the one projected for next year.
+FALSE indicates that none are equal.
+```{r}
+current_rate_equals_projected_rate = unemployment_rates == projected_rates
+print(current_rate_equals_projected_rate)
+```
+
+Perform the following operations with the two vectors:
+Divide this year's unemployment rate by the projected rate (this may reflect a relative change).
+ANALYSIS: This value reflects how much the unemployment rate will change compared to next year. If it is less than 1, it indicates that it will increase next year, and if it is greater than 1, it indicates that it will decrease next year.
+```{r}
+division <- unemployment_rates/projected_rates
+print(division)
+```
+
+
+Square this year's unemployment rates for each country.
+```{r}
+potency <- unemployment_rates^2
+print(potency)
+```
+
+
+MATRIX ANALYSIS
+
+Create the matrix of current and projected unemployment rates.
+```{r}
+unemployment_matrix <- rbind(this_year = unemployment_rates, next_year = projected_rates)
+print(unemployment_matrix)  
+```
+
+Use the rowSums() and colSums() functions to calculate the sum of the unemployment rates by country (columns) and by year (rows).
+ANALYSIS: colSums tells us the total unemployment rate for this year and next in each country.
+ANALYSIS: rowSums helps us compare total unemployment in the region between both years.
+```{r}
+sum_column <- colSums(unemployment_matrix)
+print(sum_column)
+
+suma_row <- rowSums(unemployment_matrix)
+print(suma_row)
+```
+
+Use the rowMeans() and colMeans() functions to calculate the average unemployment rates by country (columns) and by year (rows).
+colMeans: Displays the average unemployment rate by country for both years.
+rowMeans: Displays the average unemployment rate for the region for each year.
+```{r}
+column_average= colMeans(unemployment_matrix)
+print(column_average)
+
+average_row= rowMeans(unemployment_matrix)
+print(average_row)
+```
+
+
+Unemployment Change Index = Projected Unemployment Rate / Current Unemployment Rate
+ANALYSIS: If the index is greater than 1, it means the rate will increase; if it is less than 1, the rate will decrease.
+```{r}
+unemployment_change_index =unemployment_matrix["next_year",] / unemployment_matrix["this_year",]
+print(unemployment_change_index)
+```
+
+Create a new matrix combining the unemployment rate matrices with the unemployment change rates calculated using cbind() or rbind().
+ANALYSIS: Displays a complete view of unemployment in the region.
+```{r}
+full_matrix <- rbind(unemployment_matrix, unemployment_change_index)
+```
+
+Name the new matrix with rows corresponding to "This year," "Next year," and "Unemployment change index."
+ANALYSIS: Shows a complete view of unemployment in the region.
+```{r}
+rownames(full_matrix) <- c("This year", "Next year", "Unemployment change index")
+print(full_matrix)
+```
+
+Mostar "This Year" with unemployment rates for all countries
+ANALYSIS: Unemployment rates this year:
+```{r}
+rate_this_year <- full_matrix["This year", ]
+print(rate_this_year)
+```
+
+Select the "Costa Rica" column and display both the "unemployment rate this year" and the "projected unemployment rate for next year."
+ANALYSIS: Unemployment rates in Costa Rica have increased
+```{r}
+rate_costa_rica=full_matrix[1:2,"CostaRica"]
+print(rate_costa_rica)
+```
+
+Select the unemployment rates for "El Salvador" and "Panama" for this year and next year.
+ANALYSIS: The unemployment rate in El Salvador is decreasing, while it has increased in Panama.
+```{r}
+rate_salvador_panama=full_matrix[1:2,c("ElSalvador","Panama")]
+print(rate_salvador_panama)
+```
+
+Use the matrix to select the rows corresponding to the countries with an unemployment rate greater than 5% this year.
+ANALYSIS: Current year unemployment rate among the three countries: Costa Rica, Honduras, and El Salvador
+```{r}
+unemployment_rate_5 <- full_matrix["This year", full_matrix["This year", ] > 5] 
+print(unemployment_rate_5)
+```
+
