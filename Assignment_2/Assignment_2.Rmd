@@ -1,0 +1,205 @@
+---
+title: "Assignment_2"
+author: "James Gramajo"
+date: "2025-02-25"
+output: html_document
+---
+Part 1
+1.1 Functions
+```{r}
+print_message <- function() {
+  print("Hello world!")
+}
+print_message()
+```
+
+1.2 Mandatory parameters
+```{r}
+hello_function <- function(name, age) {
+  print(paste("Hola: ",name, " Age: ",age))
+}
+hello_function("James", 24)  #parameters are required for printing
+```
+
+1.3 Parameters with default value
+```{r}
+sum_function <- function(n1, n2 = 100) {
+  n1+n2
+}
+print(sum_function(50))     # Use 100 by default
+```
+
+1.4 List parameters
+```{r}
+parameters_list <- function(lst) {
+  list(
+    suma = sum(lst)
+  )
+  
+}
+print(parameters_list(c(5,5,10,10,10))) ##add the parameters
+```
+
+1.5 Function passing parameters
+```{r}
+apply_function <- function(f, x) {
+  return(f(x))
+}
+apply_function(sqrt, 16)  #the square root function is passed as a parameter
+```
+
+1.6 Function return 
+```{r}
+return_with_function <- function(n1,n2,n3) {
+  return(n1+n2+n3)
+}
+result <- return_with_function(2,2,6)  # Devuelve 10
+print(result)
+```
+
+1.7 Local and global variables
+```{r}
+global_var <- 500
+
+function_global_local <- function() {
+  local_var <- 100
+  return(global_var + local_var)
+}
+print(function_global_local())  
+```
+
+1.8 Functions that return multiple values
+```{r}
+two_value <- function(a,b) {
+  return(list(addition = a + b, subtraction = a - b))
+}
+print(two_value(10, 5)  )
+# Returns two values, the first the sum of the two numbers and 
+# the second the subtraction of the two numbers
+```
+
+
+PART 2
+2.1 Matrix Manipulation
+2.1.1 Create a 4x4 matrix with random numbers between 1 and 100.
+```{r}
+matrix4 <- matrix(sample(1:100, 16, replace = TRUE), nrow = 4, ncol = 4)
+```
+
+2.1.2 Name the rows as "A", "B", "C", "D" and the columns as "X", "Y", "Z", "W".
+```{r}
+rownames(matrix4) <- LETTERS[1:4]
+colnames(matrix4) <- c("X", "Y", "Z", "W")
+
+```
+2.1.3 Calculate the mean per row and per column using rowMeans() and colMeans().
+```{r}
+row_mean <- rowMeans(matrix4)
+colum_mean <- colMeans(matrix4)
+
+```
+
+2.1.4 Add a new column to the matrix with the mean of each row using cbind().
+```{r}
+matrix4_final <- matrix4
+matrix4_final <- cbind(matrix4_final, Media_Fila = row_mean)
+```
+
+2.1.5 Add a new row with the mean of each column using rbind().
+```{r}
+matrix4_final <- rbind(matrix4_final, Media_Col = c(colum_mean, NA))
+```
+ 
+2.1.6 Display the resulting matrix.
+```{r}
+print(matrix4_final)
+```
+
+2.2 Creating and Manipulating Dataframes
+2.2.1 Create a dataframe with information on 5 employees, with the following columns:
+- ID (a unique number for each employee).
+- Name (employee's name).
+- Salary (random number between 2000 and 8000).
+- Department (randomly assigns between "Sales", "IT", "HR", "Marketing").
+- Calculate the average salary of the employees using mean().
+- Filter and display employees whose salary is higher than the average salary.
+- Add a new Bonus column, which is 10% of salary only if the employee belongs to "Sales" or "Marketing".
+```{r}
+employees <- data.frame(
+  ID = 1:5, 
+  Nombre = c("Cinthia", "Natalia", "Elizabeth", "Jazlyne", "Jarissa"),
+  Salario = round(runif(5, 2000, 8000)),
+  Departamento = sample(c("Ventas", "IT", "Recursos Humanos", "Marketing"), 5, replace = TRUE)
+)
+```
+
+
+2.2.2 Calculate the average salary of employees using mean().
+```{r}
+average_salary  <- mean(employees$Salario)
+```
+
+
+2.2.3 Filter and display employees whose salary is higher than the average salary.
+```{r}
+filtered_employees <- subset(employees, Salario > average_salary)
+print(filtered_employees)
+```
+
+2.2.4 Add a new Bonus column that is 10% of salary only if the employee belongs to "Sales" or "Marketing."
+```{r}
+employees$Bono <- ifelse(employees$Departamento %in% c("Ventas", "Marketing"),
+                         employees$Salario * 0.10, 0)
+print(employees)
+```
+
+
+
+2.3 Using Lists
+2.3.1 Create a list in R containing the matrix from section 1 and the data frame from section 2.
+2.3.2 Display the data in the list in a structured manner.
+```{r}
+# Using lists
+
+# Create a list containing the matrix and the data frame
+list_data <- list(
+  matriz = matrix4_final,  # Matrix of section 1
+  employees = employees  # Dataframe from section 2
+)
+
+# Display list data in a structured manner
+print(list_data)
+
+```
+2.4 Defining Custom Functions
+2.4.1 Write a function called adjust_salary() that takes a data frame and an adjustment value, and increases all employees' salaries by that percentage.
+
+2.4.2 Test the function with a 5% adjustment and display the result.
+
+```{r}
+# Defining custom functions
+adjust_salary <- function(data_frame, ajuste) {
+  data_frame$Salario <- data_frame$Salario * ((100+ajuste)/100)
+  return(data_frame)
+}
+# Call the function with a 5% setting
+employees <- adjust_salary(employees, 5)
+print(employees)
+
+```
+2.5 Functions with Parameters and Data Filtering
+2.5.1 Define a function, filter_department(), that takes a data frame and a department name as parameters and returns only the employees in that department.
+2.5.2 Execute the function and display the employees in "IT."
+
+```{r}
+filter_department <- function(dataframe, department) {
+  return(dataframe[dataframe$Departamento == department, ])
+}
+
+# Call the function and display the IT employees
+
+IT_department_jobs <- filter_department(employees, "IT")
+print(IT_department_jobs)
+
+```
+
