@@ -58,9 +58,36 @@ head(summary_by_host)
 # Group  data by room_type
 summary_by_room <- data_selected %>%
   group_by(room_type) %>%
-  summarize(averageg_availability = mean(availability_365, na.rm = TRUE)  )# average available
+  summarize(average_availability = mean(availability_365, na.rm = TRUE)  )# average available
 
 # Group the data by room average availabllity.
 head(summary_by_room)
+```
+PART 3
+```{r}
+ggplot(data = data_selected, aes(x = price, y = number_of_reviews, color = room_type)) +
+  geom_point(alpha = 1) +
+  labs(x = "Precio noche $", y = "Numero de reseñas", title = "Precio - Número de Reseñas",
+       color = "Tipo") +
+  theme_minimal()
+```
+CHART 2
+```{r}
+head(summary_by_room)
+ggplot(data = summary_by_room, aes(x = room_type, y = average_availability, fill = room_type)) +
+  labs(title = "Precio Promedio vs Tipo de Alojamiento", x = "Tipo alojamiento", y = "Precio promedio ($)",
+       fill = "Tipo de alojamiento") +
+  geom_col() +
+  theme_minimal()
+```
+CHART 3
+```{r}
+
+head(summary_by_room)
+ggplot(data = summary_by_room, aes(x = room_type, y = average_availability, fill = room_type)) +
+  labs(title = "Precio Promedio vs Tipo de Alojamiento", x = "Tipo alojamiento", y = "Precio promedio ($)",
+       fill = "Tipo de alojamiento") +
+  geom_col() +
+  theme_minimal()
 ```
 
