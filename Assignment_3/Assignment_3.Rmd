@@ -34,10 +34,10 @@ data_air_bnb_filter <- data_air_bnb_filter %>%
 
 #Create a new column called total revenue, which represents the potential revenue in a year (price * availability_365).
 data_air_bnb_filter <- data_air_bnb_filter %>%
-  mutate(total_revenue, = price * availability_365 )
+  mutate(total_revenue= price * availability_365 )
 
-
-
+data_selected <- data_air_bnb_filter %>%
+  select(host_location, room_type, price, availability_365, total_revenue, number_of_reviews)
 
 ```
 
