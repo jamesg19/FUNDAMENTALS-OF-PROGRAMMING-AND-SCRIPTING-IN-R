@@ -83,11 +83,13 @@ ggplot(data = summary_by_room, aes(x = room_type, y = average_availability, fill
 CHART 3
 ```{r}
 
-head(summary_by_room)
-ggplot(data = summary_by_room, aes(x = room_type, y = average_availability, fill = room_type)) +
-  labs(title = "Precio Promedio vs Tipo de Alojamiento", x = "Tipo alojamiento", y = "Precio promedio ($)",
-       fill = "Tipo de alojamiento") +
-  geom_col() +
+head(data_selected)
+ggplot(data = data_selected, aes(x = availability_365, y = price)) +
+  geom_point(alpha = 1, color = "red") +  
+  facet_wrap(~host_location) +  # put panels by host locations
+  labs(title = "Disponibilidad vs Precio ",
+       x = "Disponibilidad dias (availability_365)",
+       y = "Precio por noche $") +
   theme_minimal()
 ```
 
