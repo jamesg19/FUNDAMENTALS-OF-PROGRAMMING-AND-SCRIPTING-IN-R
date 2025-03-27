@@ -10,7 +10,7 @@ library(tidyverse)
 data_uber <- read_csv("uber.csv")
 head(data_uber)
 ```
-PART 1
+PART I
 Loading and exploration data
 ```{r}
 # import the datset into a data.frame and examine it is structure with glimpse() and summary().
@@ -25,7 +25,7 @@ data_uber$pickup_datetime <- as.POSIXct(data_uber$pickup_datetime, format="%Y-%m
 
 ```
 
-PART 2
+PART II
 Use filter()
 ```{r}
 # WIth a fare over $10 and at least 2 passengers
@@ -37,27 +37,61 @@ night_trip <- filtered_trip %>%
   filter(hour(pickup_datetime) >= 22 | hour(pickup_datetime) <=5)
 night_trip
 ```
-PART 3
+PART III
 Use mutate()
 ```{r}
 # Extract the time of day and day of week from pickup_datetime.
-data_uber <- data_uber %>%
-  mutate( #usung mutate for new columns
+uber_data_mutate <- data_uber %>%
+  mutate( ##using mutate for new columns
     day_hour = hour(pickup_datetime), #Extract the hour of the day
     day_week = wday(pickup_datetime, label = TRUE, abbr = FALSE), #extarct day of week with name.
     distance = round(sqrt( (dropoff_longitude -pickup_longitude)^2 + (dropoff_latitude-pickup_latitude)^2 ),8) #Calc distance with formula and only 8 decimals
-  ) %>%
-  transmute(
-    key,
+  ) 
+uber_data_transmute <- uber_data_mutate %>%
+  transmute( #using transmute for show 4 columns
+    key, 
     fare_amount,
     passenger_count,
     distance
   )
 
-
-# Ver los primeros registros
+# Show the first rows
 head(uber_data_transmute)
 
+```
+
+PART IV
+Select variable with `helpers`
+Using `select()` and `helpers` to select especific columns.
+```{r}
+#Get columns that begin with 'pickup'
+start_pickup <- data_uber %>%
+  select(starts_with("pickup")) #colums starts with 'pickup'
+start_pickup
+
+#Get columns ending with 'latitude'
+ends_latitude <- data_uber %>%
+  select(ends_with("latitude")) #colums ends with 'latitude'
+ends_latitude
+
+#Get columns contains 'amount'
+contains_amount <- data_uber %>%
+  select(contains("amount")) #colums contains 'amount'
+contains_amount
+```
+
+PART VI
+Counting and filtering of aggregate data.
+```{r}
+# Extarct day of the week and count trips per day.
+trips_per_day <- uber_data_mutate %>%
+  count(day_week, name = "n")  # Count trips by day of the Week
+trips_per_day
+
+#Apply top_n(3,n), and show the 3 days with the most trips.
+top_trips <- trips_per_day %>%
+  top_n(3,n)
+top_trips
 ```
 
 
