@@ -6,6 +6,7 @@ output: pdf_document
 ---
 ```{r}
 library(dplyr)
+library(tidyverse)
 data_uber <- read_csv("uber.csv")
 head(data_uber)
 ```
@@ -41,12 +42,22 @@ Use mutate()
 ```{r}
 # Extract the time of day and day of week from pickup_datetime.
 data_uber <- data_uber %>%
-  mutate(
+  mutate( #usung mutate for new columns
     day_hour = hour(pickup_datetime), #Extract the hour of the day
     day_week = wday(pickup_datetime, label = TRUE, abbr = FALSE), #extarct day of week with name.
-    distance = round(sqrt( (dropoff_longitude -pickup_longitude)^2 + (dropoff_latitude-pickup_latitude)^2 ),4) #Calc distance with formula and only 2 decimals
-  ) 
-data_uber
+    distance = round(sqrt( (dropoff_longitude -pickup_longitude)^2 + (dropoff_latitude-pickup_latitude)^2 ),8) #Calc distance with formula and only 8 decimals
+  ) %>%
+  transmute(
+    key,
+    fare_amount,
+    passenger_count,
+    distance
+  )
+
+
+# Ver los primeros registros
+head(uber_data_transmute)
+
 ```
 
 
