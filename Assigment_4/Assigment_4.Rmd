@@ -41,7 +41,7 @@ PART III
 Use mutate()
 ```{r}
 # Extract the time of day and day of week from pickup_datetime.
-uber_data_mutate <- data_uber %>%
+uber_data_mutate <- night_trip %>%
   mutate( ##using mutate for new columns
     day_hour = hour(pickup_datetime), #Extract the hour of the day
     day_week = wday(pickup_datetime, label = TRUE, abbr = FALSE), #extarct day of week with name.
@@ -67,18 +67,34 @@ Using `select()` and `helpers` to select especific columns.
 #Get columns that begin with 'pickup'
 start_pickup <- data_uber %>%
   select(starts_with("pickup")) #colums starts with 'pickup'
-start_pickup
+head(start_pickup)
 
 #Get columns ending with 'latitude'
 ends_latitude <- data_uber %>%
   select(ends_with("latitude")) #colums ends with 'latitude'
-ends_latitude
+head(ends_latitude)
 
 #Get columns contains 'amount'
 contains_amount <- data_uber %>%
   select(contains("amount")) #colums contains 'amount'
-contains_amount
+head(contains_amount)
 ```
+PART V
+Data grouping ans summarization
+```{r}
+summary_trips <- uber_data_transmute %>%
+  group_by(passenger_count) %>% #Group data by passenger_count
+  summarize(
+    average_rate = mean(fare_amount, na.rm=TRUE), #mean of fare_amount
+    average_distance = mean(distance, na.rm=TRUE) #mean of distance
+  ) %>%
+  ungroup() #Ungroup the data
+summary_trips
+
+
+
+```
+
 
 PART VI
 Counting and filtering of aggregate data.
