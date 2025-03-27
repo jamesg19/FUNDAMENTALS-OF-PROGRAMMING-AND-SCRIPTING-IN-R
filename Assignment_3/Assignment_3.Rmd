@@ -26,7 +26,7 @@ data_air_bnb <- data_air_bnb %>%
 
 #Filters records to keep only accommodations with more than 10 reviews and a price less than $500 per night. #Also, excludes missing valuesfor the host_location column.
 data_air_bnb_filter <- data_air_bnb %>%
-  filter(number_of_reviews > 10, price < 500, is.na(host_location) )
+  filter(number_of_reviews > 10 & price < 500 & !is.na(host_location) )
 
 #Sorts data from highest to lowest availability (availability_365).
 data_air_bnb_filter <- data_air_bnb_filter %>%
@@ -36,7 +36,7 @@ data_air_bnb_filter <- data_air_bnb_filter %>%
 data_air_bnb_filter <- data_air_bnb_filter %>%
   mutate(total_revenue= price * availability_365 )
 
-data_selected <- data_air_bnb_filter %>%
+data_air_bnb_filter <- data_air_bnb_filter %>%
   select(host_location, room_type, price, availability_365, total_revenue, number_of_reviews)
 
 ```
@@ -45,7 +45,7 @@ Groupings and summaries
 Groups data by host location and calculates
 ```{r}
 # Group  data by host_location
-summary_by_host <- data_selected %>%
+summary_by_host <- data_air_bnb_filter %>%
   group_by(host_location) %>%
   summarize(
     avg_price = mean(price, na.rm = TRUE),  # avrrage price by night
@@ -56,40 +56,74 @@ summary_by_host <- data_selected %>%
 head(summary_by_host)
 
 # Group  data by room_type
-summary_by_room <- data_selected %>%
-  group_by(room_type) %>%
+summary_by_room_and_host <- data_air_bnb_filter %>%
+  group_by(host_location, room_type) %>%
   summarize(average_availability = mean(availability_365, na.rm = TRUE)  )# average available
 
 # Group the data by room average availabllity.
-head(summary_by_room)
+head(summary_by_room_and_host)
 ```
 PART 3
+CHART 1
 ```{r}
-ggplot(data = data_selected, aes(x = price, y = number_of_reviews, color = room_type)) +
-  geom_point(alpha = 1) +
+ggplot(data = data_air_bnb_filter, aes(x = price, y = number_of_reviews, color = room_type)) +
+  geom_point(alpha = 0.6) +
   labs(x = "Precio noche $", y = "Numero de reseñas", title = "Precio - Número de Reseñas",
        color = "Tipo") +
   theme_minimal()
 ```
+Analisis Grafica 1:
+El eje X representa el precio por noche de un alojamiento.
+El eje Y representa el numero de resenas es mayor en alojamientos mas baratos es decir <$150 y se concentran una gran cantidad de reviews.
+Ademas entre mas caro sea el alquiler de una habitacion disminuye la cantidad de review.
+Las habitaciones caras suelen tener menos resenas.
+
+Se puede observar que la mayoria de puntos se encuentra 
+
 CHART 2
 ```{r}
-head(summary_by_room)
-ggplot(data = summary_by_room, aes(x = room_type, y = average_availability, fill = room_type)) +
-  labs(title = "Precio Promedio vs Tipo de Alojamiento", x = "Tipo alojamiento", y = "Precio promedio ($)",
-       fill = "Tipo de alojamiento") +
+resumen_room_type <- data_air_bnb_filter %>%
+  group_by(room_type) %>%
+  summarize(avg_price = mean(price, na.rm = TRUE))
+
+
+ggplot(resumen_room_type, aes(x = room_type, y = avg_price, fill = room_type)) +
   geom_col() +
+  labs(title = "Precio promedio por tipo de alojamiento",
+       x = "Tipo de alojamiento",
+       y = "Precio promedio ($)") +
   theme_minimal()
+
 ```
+Analisis Grafica 2:
+En el eje X se encuentra en Tipo de alojamiento
+En el eje Y se encuentra el precio promedio.
+
+Colores
+Rojo Entire home/apt 
+Azul Private Room.
+
+Se puede observar que el precio de alquilar Entire home/apt es mayor al de Private Room.
+Rentar una private room es mas barato.
+Entire home/apt es mas caro
+
 CHART 3
 ```{r}
 
-head(data_selected)
-ggplot(data = data_selected, aes(x = availability_365, y = price)) +
-  geom_point(alpha = 1, color = "red") +  
-  facet_wrap(~host_location) +  # put panels by host locations
-  labs(title = "Disponibilidad vs Precio ",
-       x = "Disponibilidad dias (availability_365)",
-       y = "Precio por noche $") +
+ggplot(data_air_bnb_filter, aes(x = availability_365, y = price, color= room_type)) +
+  geom_point(alpha = 0.3) +
+  facet_wrap(~host_location, labeller = labeller(host_location = label_wrap_gen(width = 15))) +
+  labs(title = "Disponibilidad vs Precio por ubicación",
+       x = "Días disponibles en el año", y = "Precio por noche ($)") +
   theme_minimal()
-```
 
+```
+Analisis Grafica 3:
+Eje X es dias disponibles en el año.
+Eje Y es precio por noche en dólares.
+Colores
+Rojo Entire home/apt 
+Celeste (Private room): Habitación privada.
+La mayoría de los datos están situados en Albany, NY, con varios puntos en disponibilidad alta (300+ días) y precios entre 50 y 200 USD.
+Otras ciudades como New York, NY, Fort Walton Beach, FL, y Saratoga Springs, NY muestran datos dispersos pero menos concentrados.
+Algunos lugares (Stamford NY, Valley Stream NY, United States) tienen pocos datos, lo que indica baja oferta o poca recolección de datos para esas ubicaciones.

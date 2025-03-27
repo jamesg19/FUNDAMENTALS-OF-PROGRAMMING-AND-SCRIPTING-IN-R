@@ -1,0 +1,54 @@
+---
+title: "Assignment_4"
+author: "James Gramajo"
+date: "2025-03-25"
+output: pdf_document
+---
+```{r}
+library(dplyr)
+data_uber <- read_csv("uber.csv")
+head(data_uber)
+```
+PART 1
+Loading and exploration data
+```{r}
+# import the datset into a data.frame and examine it is structure with glimpse() and summary().
+print("glimpse()...")
+glimpse(data_uber)
+print("summary()...")
+
+summary(data_uber)
+
+# Convert the column pickup_datetime to POSIXct format.
+data_uber$pickup_datetime <- as.POSIXct(data_uber$pickup_datetime, format="%Y-%m-%d %H:%M:%S", tz="UTC")
+
+```
+
+PART 2
+Use filter()
+```{r}
+# WIth a fare over $10 and at least 2 passengers
+filtered_trip <- data_uber %>%
+  filter(fare_amount> 10 & passenger_count >=2)
+filtered_trip
+# Carried out in night between 10:00 Pm until 5:00 Am.
+night_trip <- filtered_trip %>%
+  filter(hour(pickup_datetime) >= 22 | hour(pickup_datetime) <=5)
+night_trip
+```
+PART 3
+Use mutate()
+```{r}
+# Extract the time of day and day of week from pickup_datetime.
+data_uber <- data_uber %>%
+  mutate(
+    day_hour = hour(pickup_datetime), #Extract the hour of the day
+    day_week = wday(pickup_datetime, label = TRUE, abbr = FALSE), #extarct day of week with name.
+    distance = round(sqrt( (dropoff_longitude -pickup_longitude)^2 + (dropoff_latitude-pickup_latitude)^2 ),4) #Calc distance with formula and only 2 decimals
+  ) 
+data_uber
+```
+
+
+
+

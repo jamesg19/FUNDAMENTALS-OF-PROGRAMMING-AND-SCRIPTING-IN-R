@@ -1,0 +1,63 @@
+---
+title: "Untitled"
+output: html_document
+date: "2025-03-22"
+---
+
+```{r}
+library(tidyverse)
+listings <- read_csv("listings.csv")
+head(listings)
+str(listings)
+
+listings <- listings %>%
+  mutate(price = as.numeric(gsub("[$,]", "", price))) %>%
+  filter(number_of_reviews > 10, price < 500, !is.na(host_location)) %>%
+  arrange(desc(availability_365)) %>%
+  mutate(total_revenue = price * availability_365) %>%
+  select(host_location, room_type, price, availability_365, total_revenue, number_of_reviews)
+
+
+resumen_host <- listings %>%
+  group_by(host_location) %>%
+  summarize(
+    avg_price = mean(price, na.rm = TRUE),
+    total_listings = n(),
+    avg_revenue = mean(total_revenue, na.rm = TRUE)
+  )
+
+disponibilidad_promedio <- listings %>%
+  group_by(host_location, room_type) %>%
+  summarize(avg_availability = mean(availability_365, na.rm = TRUE))
+
+
+#3
+ggplot(listings, aes(x = price, y = number_of_reviews, color = room_type)) +
+  geom_point() +
+  labs(title = "Relación entre precio y número de reseñas",
+       x = "Precio por noche ($)", y = "Número de reseñas") +
+  theme_minimal()
+
+resumen_room_type <- listings %>%
+  group_by(room_type) %>%
+  summarize(avg_price = mean(price, na.rm = TRUE))
+
+ggplot(resumen_room_type, aes(x = room_type, y = avg_price, fill = room_type)) +
+  geom_col() +
+  labs(title = "Precio promedio por tipo de alojamiento",
+       x = "Tipo de alojamiento",
+       y = "Precio promedio ($)") +
+  theme_minimal()
+
+
+ggplot(listings, aes(x = availability_365, y = price)) +
+  geom_point() +
+  facet_wrap(~host_location) +
+  labs(title = "Disponibilidad vs Precio por ubicación",
+       x = "Días disponibles en el año", y = "Precio por noche ($)") +
+  theme_minimal()
+
+
+
+```
+
