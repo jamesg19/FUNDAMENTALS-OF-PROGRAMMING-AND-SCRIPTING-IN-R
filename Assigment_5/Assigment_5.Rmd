@@ -77,10 +77,10 @@ question_answer_counts
 5 Joining questions, answers, and tags
 ```{r}
 #5.1. Combine question_tags with question_answer_counts using an inner_join.
-questions_tags_answers <- inner_join(question_tags_file, question_answer_counts, by = c("question_id" = "id"))
+questions_tags <- inner_join(question_tags_file, question_answer_counts, by = c("question_id" = "id"))
 
 #5.2. Now, use another inner_join to add the tags table.
-questions_tags_answers <- inner_join(questions_tags_answers, tags_file, by = c("tag_id" = "id"))
+questions_tags_answers <- inner_join(questions_tags, tags_file, by = c("tag_id" = "id"))
 questions_tags_answers
 
 ```
